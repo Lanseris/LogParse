@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
+using LogParse.Templates.TemplatePartsTypes;
 
 namespace LogParse
 {
@@ -13,9 +14,26 @@ namespace LogParse
 
         public ExceptionInfoControll ExceptionInfoControll => _exceptionInfoControll;
 
+        private Dictionary<string, ExceptionBodyTemplate> _exceptionBodyTemplatesDict;
+
         public LogControll(string path)
         {
             SetLogFilePath(path);
+
+            _exceptionBodyTemplatesDict = new Dictionary<string, ExceptionBodyTemplate>();
+
+
+            #region Создание тестового шаблона
+            ExceptionBodyTemplate exceptionBodyTemplate = new ExceptionBodyTemplate("Тест_1");
+            exceptionBodyTemplate.AddTemplatePart(TemplatePartCreator.CreateTemplatePart("ExceptionStart", "EXCEPTION", null, 1));
+            exceptionBodyTemplate.AddTemplatePart(TemplatePartCreator.CreateTemplatePart("MachineName", "MachineName", null, 1));
+            exceptionBodyTemplate.AddTemplatePart(TemplatePartCreator.CreateTemplatePart("Exception Type", "Exception Type", null, 1));
+            exceptionBodyTemplate.AddTemplatePart(TemplatePartCreator.CreateTemplatePart("Message", "Message: ", null, 1));
+            exceptionBodyTemplate.AddTemplatePart(TemplatePartCreator.CreateTemplatePart("Server stack trace", "Server stack trace", ""));
+
+            _exceptionBodyTemplatesDict.Add(exceptionBodyTemplate.TemplateName, exceptionBodyTemplate); 
+            #endregion
+
         }
 
         private bool SetLogFilePath(string path)

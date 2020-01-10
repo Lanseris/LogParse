@@ -18,9 +18,15 @@ namespace LogParse
             _exceptionInfoList = exceptionInfoList;
         }
 
+        public void AddExceptionInfo(ExceptionInfo exceptionInfo)
+        {
+            if (exceptionInfo == null)
+                throw new ArgumentNullException(nameof(exceptionInfo));
 
+            _exceptionInfoList.Add(exceptionInfo);
+        }
 
-        #region  не должно быть здесь (наверное)
+        #region  не должно быть здесь (наверное) (+ не актуально после добавление шаблонов)
         public void SimplyPrintExceptionInfoList()
         {
             foreach (var ex in _exceptionInfoList)

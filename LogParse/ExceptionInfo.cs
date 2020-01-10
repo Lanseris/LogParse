@@ -6,12 +6,16 @@ namespace LogParse
 {
     public class ExceptionInfo
     {
-        public string exType;
+        public ExceptionBodyTemplate ExcceptionBodyTemplate { get; set; }
 
-        public DateTime exceptionDateTime;
+        public Dictionary<string, string> ExceptionParts { get; set; }
 
-        public string message;
+        //public string exType;
 
-        public List<string> exBody;
+        //    public DateTime exceptionDateTime;
+
+        //    public string message;
+
+        //    public List<string> exBody;
+        }
     }
-}

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace LogParse
 {
-    public class TemplatePart
+    public abstract class TemplatePart: IReadingTemplatePart
     {
         private string _partName;
 
@@ -20,13 +20,14 @@ namespace LogParse
             }
         }
 
-        private ReadingTemplateEnum _readingTemplate;
+        protected ReadingTemplateEnum _readingTemplate;
 
-        public TemplatePart(string partName, ReadingTemplateEnum readingTemplate)
+        public ReadingTemplateEnum ReadingTemplate => _readingTemplate;
+
+
+        public TemplatePart(string partName)
         {
             PartName = partName;
-
-            _readingTemplate = readingTemplate;
         }
     }
 }

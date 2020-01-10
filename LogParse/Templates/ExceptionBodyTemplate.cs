@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace LogParse
 {
-    class ExcceptionBodyTemplate
+    public class ExceptionBodyTemplate
     {
         private string _templateName;
 
@@ -21,21 +21,25 @@ namespace LogParse
             }
         }
 
-        private LinkedList<TemplatePart> _templatePartsLinkedList;
+        private LinkedList<IReadingTemplatePart> _templatePartsLinkedList;
 
-
-        public ExcceptionBodyTemplate(string templateName, ReadingTemplateEnum readingSignatureEnum)
+        public ExceptionBodyTemplate(string templateName)
         {
             if (string.IsNullOrEmpty(templateName))
                 throw new ArgumentNullException(nameof(templateName));
 
             _templateName = templateName;
 
-            _readingTemplate = readingSignatureEnum;
-
-            _templatePartsLinkedList = new LinkedList<TemplatePart>();
+            _templatePartsLinkedList = new LinkedList<IReadingTemplatePart>();
         }
 
-        public  
+        public void AddTemplatePart(IReadingTemplatePart templatePart)
+        {
+            if (templatePart == null)
+                throw new ArgumentNullException(nameof(templatePart));
+
+            _templatePartsLinkedList.AddLast(templatePart);
+        }
+
     }
 }
