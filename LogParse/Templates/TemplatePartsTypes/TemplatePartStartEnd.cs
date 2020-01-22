@@ -22,5 +22,13 @@ namespace LogParse.Templates
             StartString = startString;
             EndString = endString;
         }
+
+        public override void LineProcessing(string fileRow)
+        {
+            if (fileRow.Contains())
+            {
+
+            }
+        }
     }
 }

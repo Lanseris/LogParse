@@ -23,6 +23,8 @@ namespace LogParse
 
         private LinkedList<IReadingTemplatePart> _templatePartsLinkedList;
 
+        public LinkedList<IReadingTemplatePart> TemplatePartsLinkedList => _templatePartsLinkedList;
+
         public ExceptionBodyTemplate(string templateName)
         {
             if (string.IsNullOrEmpty(templateName))

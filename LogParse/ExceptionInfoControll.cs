@@ -10,7 +10,11 @@ namespace LogParse
 
         public List<ExceptionInfo> ExceptionInfoList => _exceptionInfoList;
 
-        public ExceptionInfoControll(List<ExceptionInfo> exceptionInfoList)
+        /// <summary>
+        /// TODO переделать конструктор
+        /// </summary>
+        /// <param name=""></param>
+        public ExceptionInfoControll(Dictionary<string, List<ExceptionInfo>>)
         {
             if (exceptionInfoList == null)
                 throw new ArgumentNullException(nameof(exceptionInfoList));

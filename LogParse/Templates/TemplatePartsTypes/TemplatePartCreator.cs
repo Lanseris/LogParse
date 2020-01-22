@@ -4,6 +4,9 @@ using System.Text;
 
 namespace LogParse.Templates.TemplatePartsTypes
 {
+    /// <summary>
+    /// TODO доработать  фабрику, если ЭТО можно так назвать
+    /// </summary>
     public static class TemplatePartCreator
     {
         public static IReadingTemplatePart CreateTemplatePart(string templateName, string startString = null, string endString = null, int numOfStrings = 0)
