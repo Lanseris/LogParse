@@ -6,10 +6,15 @@ namespace LogParse
 {
     public interface IReadingTemplatePart
     {
-        public ReadingTemplateEnum ReadingTemplate { get; }
+        public ReadingTemplateEnum ReadingTemplateType { get; }
 
         public void LineProcessing(string fileRow);
 
-        public bool EndOfTemplate { get; }
+        //public bool EndOfTemplate { get; }
+
+        public event Action EndOfTemplate;
+
+        public LinkedList<string> TemplateBody { get; }
+
     }
 }

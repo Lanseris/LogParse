@@ -153,7 +153,7 @@ namespace LogParse
                     throw new ArgumentException("Дублирующийся ключ: " + exceptionBodyTemplateKeyValue.Key);
 
 
-                exceptionInfoDict.Add(exceptionBodyTemplateKeyValue.Key, extractTemplateObjects(exceptionBodyTemplateKeyValue.Value, fileString, copyFileString));
+                //exceptionInfoDict.Add(exceptionBodyTemplateKeyValue.Key, extractTemplateObjects(exceptionBodyTemplateKeyValue.Value, fileString, copyFileString));
             }
 
 

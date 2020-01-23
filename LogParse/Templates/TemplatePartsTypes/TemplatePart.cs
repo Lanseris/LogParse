@@ -8,9 +8,25 @@ namespace LogParse
     {
         private string _partName;
 
-        private bool _endOfTemplate;
+        //private bool _endOfTemplate;
 
-        public bool EndOfTemplate => _endOfTemplate;
+        //public bool EndOfTemplate => _endOfTemplate;
+
+        private LinkedList<string> _templateBody;
+
+        public LinkedList<string> TemplateBody => _templateBody;
+
+        protected ReadingTemplateEnum _readingTemplate;
+
+        public ReadingTemplateEnum ReadingTemplateType => _readingTemplate;
+
+        public event Action EndOfTemplate;
+
+        protected void InvokeEndOfTemplate()
+        {
+            EndOfTemplate?.Invoke();
+        }
+
 
         public string PartName 
         { 
@@ -24,16 +40,12 @@ namespace LogParse
             }
         }
 
-        protected ReadingTemplateEnum _readingTemplate;
-
-        public ReadingTemplateEnum ReadingTemplate => _readingTemplate;
-
-        
-
-        public TemplatePart(string partName)
+        public TemplatePart(string partName, Action endOfTemplate)
         {
             PartName = partName;
-            _endOfTemplate = false;
+            EndOfTemplate += endOfTemplate;
+            //_endOfTemplate = false;
+            _templateBody = new LinkedList<string>();
         }
 
         public virtual void LineProcessing(string fileRow)
