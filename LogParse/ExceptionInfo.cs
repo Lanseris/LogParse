@@ -8,7 +8,7 @@ namespace LogParse
     {
         public ExceptionBodyTemplate ExcceptionBodyTemplate { get; set; }
 
-        public Dictionary<string, string> ExceptionParts { get; set; }
+        public Dictionary<string, IReadingTemplatePart> ExceptionParts { get; set; }
 
         //public string exType;
 

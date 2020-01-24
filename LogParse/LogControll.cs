@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using LogParse.Templates.TemplatePartsTypes;
+using System.Linq;
 
 namespace LogParse
 {
@@ -147,14 +148,6 @@ namespace LogParse
 
             File.Copy(fileString, copyFileString);
 
-            foreach (var exceptionBodyTemplateKeyValue in exceptionBodyTemplatesDict)
-            {
-                if (exceptionInfoDict.ContainsKey(exceptionBodyTemplateKeyValue.Key))
-                    throw new ArgumentException("Дублирующийся ключ: " + exceptionBodyTemplateKeyValue.Key);
-
-
-                //exceptionInfoDict.Add(exceptionBodyTemplateKeyValue.Key, extractTemplateObjects(exceptionBodyTemplateKeyValue.Value, fileString, copyFileString));
-            }
 
 
             File.Delete(copyFileString);
@@ -163,61 +156,106 @@ namespace LogParse
             #endregion
         }
 
-        private List<ExceptionInfo> extractTemplateObjects(ExceptionBodyTemplate exceptionBodyTemplate,string fileString, string copyFileString)
+        private Dictionary<string, List<ExceptionInfo>> extractTemplateObjects(string fileString, string copyFileString)
         {
-            if (exceptionBodyTemplate == null)
-                throw new ArgumentNullException(nameof(exceptionBodyTemplate));
+            ///Надо ли делать проверку на пути к файлам
+            
+            //Список ошибок, разложеный по имени шаблона, применяемого для их считывания
+            Dictionary<string, List<ExceptionInfo>> exceptionInfosDic = new Dictionary<string, List<ExceptionInfo>>();
 
-            List<ExceptionInfo> exceptionInfosList = new List<ExceptionInfo>();
+            //Первые части шаблонов
+            Dictionary<string, IReadingTemplatePart> FirstTemplatePartsDic;
+
+            //считываемый на данный момент шаблон
+            ExceptionBodyTemplate readingExceptionBodyTemplate = null;
+            //считывается ли сейчас шаблон
+            bool exceptionBodyTemplateIsReading = false;
+            //считываемая на данный момент часть шаблона
+            IReadingTemplatePart readingTemplatePart = null;
+
+            //Объект, содержащий в себе список Шаблонов Частей Шаблона и их текстовое содержание
             ExceptionInfo exceptionInfo = null;
+
+            FirstTemplatePartsDic = getFirstsTemplateParts();
 
             using (StreamReader streamReader = new StreamReader(copyFileString))
             {
-
-
+               
 
                 while (!streamReader.EndOfStream)
                 {
                     fileString = streamReader.ReadLine();
 
-                    
+                    #region Поиск совбадения первой части шаблона
+
+                    //если шаблон ещё не считывается
+                    if (!exceptionBodyTemplateIsReading)
+                    {
+                       //для каждой части из списка первых частей шаблонов
+                        foreach (var templatePart in FirstTemplatePartsDic)
+                        {
+                            //попытка считать строку частью шаблона
+                            templatePart.Value.LineProcessing(fileString);
+
+                            //если попытка была успешной и считывание началось
+                            if (templatePart.Value.IsReading)
+                            {
+                                exceptionBodyTemplateIsReading = true;
+
+                                //нахождение шаблона, первая часть которого начала считываться
+                                readingExceptionBodyTemplate = _exceptionBodyTemplatesDict[templatePart.Key];
+
+                                #region TODO зафигачить конструктор
+                                exceptionInfo = new ExceptionInfo();
+                                exceptionInfo.ExcceptionBodyTemplate = readingExceptionBodyTemplate;
+                                exceptionInfo.ExceptionParts = new Dictionary<string, IReadingTemplatePart>(); 
+                                #endregion
+
+                                readingTemplatePart = templatePart.Value;
+                                break;
+                            }
+                        }
+                    }
+                    #endregion
+
+                    #region Чтение шаблона
+                    else
+                    {
+                        if (readingTemplatePart.IsReading)
+                        {
+                            readingTemplatePart.LineProcessing(fileString);
+                        }
+                        else
+                        {
+                            exceptionInfo.ExceptionParts.Add(readingTemplatePart.PartName, readingTemplatePart);
+
+                            if (readingExceptionBodyTemplate.TemplatePartsLinkedList.GetEnumerator().MoveNext())
+                            {
+
+                            }
+                            else
+                            {
+                                exceptionBodyTemplateIsReading = false;
+                                exceptionInfosDic.ContainsKey(readingExceptionBodyTemplate.TemplateName)? exceptionInfosDic[readingExceptionBodyTemplate.TemplateName].Add(readingExceptionBodyTemplate)
+                            }
+                        }
 
 
-
-                    //if (!startException)
-                    //{
-                    //    if (fileString.Contains("EXCEPTION"))
-                    //    {
-                    //        excnNum++;
-                    //        startException = true;
-                    //        exceptionInfo = new ExceptionInfo();
-                    //        exceptionInfo.exBody = new List<string>();
-                    //        exceptionInfo.exBody.Add(fileString);
-                    //    }
-                    //}
-                    //else
-                    //{
-                    //    if (fileString == string.Empty)
-                    //    {
-                    //        startException = false;
-                    //        exceptionInfoList.Add(exceptionInfo);
-                    //    }
-                    //    else
-                    //    {
-                    //        exceptionInfo?.exBody.Add(fileString);
-                    //        if (fileString.Contains("Exception Type"))
-                    //        {
-                    //            exceptionInfo.exType = fileString.Substring(16, fileString.Length - 16);
-                    //        }
-                    //    }
-                    //}
-
-
+                    } 
+                    #endregion
                 }
             }
 
+            return exceptionInfosDic;
+        }
 
-            return exceptionInfosList;
+        /// <summary>
+        /// Возвращает первые части шаблонов
+        /// </summary>
+        /// <returns></returns>
+        private Dictionary<string, IReadingTemplatePart> getFirstsTemplateParts()
+        {
+            return _exceptionBodyTemplatesDict.ToDictionary(x=> x.Key, i=>i.Value.TemplatePartsLinkedList.First());
         }
 
     }

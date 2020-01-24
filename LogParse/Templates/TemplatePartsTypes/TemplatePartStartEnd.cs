@@ -10,8 +10,6 @@ namespace LogParse.Templates
 
         public string EndString { get; set; }
 
-        private bool _reading;
-
 
         public TemplatePartStartEnd(string partName,Action endOfTemplate, string startString, string endString):
             base(partName, endOfTemplate)
@@ -23,7 +21,6 @@ namespace LogParse.Templates
             
             StartString = startString;
             EndString = string.IsNullOrWhiteSpace(endString)?"": endString;
-            _reading = false;
         }
 
         //кажись верно

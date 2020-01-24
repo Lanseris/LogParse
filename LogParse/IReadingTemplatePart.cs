@@ -10,11 +10,13 @@ namespace LogParse
 
         public void LineProcessing(string fileRow);
 
-        //public bool EndOfTemplate { get; }
+        public bool IsReading { get; }
 
         public event Action EndOfTemplate;
 
         public LinkedList<string> TemplateBody { get; }
+
+        public string PartName { get; set; }
 
     }
 }
