@@ -8,14 +8,22 @@ namespace LogParse
     {
         public ExceptionBodyTemplate ExcceptionBodyTemplate { get; set; }
 
-        public Dictionary<string, IReadingTemplatePart> ExceptionParts { get; set; }
+        //название части шаблона и её тело
+        public Dictionary<string, List<string>> ExceptionPartsReultsDic { get; set; }
 
-        //public string exType;
+        public ExceptionInfo()
+        {
+            ExceptionPartsReultsDic = new Dictionary<string, List<string>>();
+        }
 
-        //    public DateTime exceptionDateTime;
+        public void AddRowToTemplatePartBody(string partName, string row)
+        {
+            if (!ExceptionPartsReultsDic.ContainsKey(partName))
+            {
+                ExceptionPartsReultsDic.Add(partName, new List<string>());
+            }
 
-        //    public string message;
-
-        //    public List<string> exBody;
+            ExceptionPartsReultsDic[partName].Add(row);
         }
     }
+}

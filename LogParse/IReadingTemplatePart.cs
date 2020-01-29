@@ -8,13 +8,13 @@ namespace LogParse
     {
         public ReadingTemplateEnum ReadingTemplateType { get; }
 
-        public void LineProcessing(string fileRow);
+        public void LineProcessing(string fileRow, ref ExceptionInfo exceptionInfo );
+
+        public bool CheckConditionMatch(string stringForCheck);
 
         public bool IsReading { get; }
 
         public event Action EndOfTemplate;
-
-        public LinkedList<string> TemplateBody { get; }
 
         public string PartName { get; set; }
 

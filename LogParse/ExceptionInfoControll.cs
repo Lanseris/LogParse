@@ -6,30 +6,46 @@ namespace LogParse
 {
     public class ExceptionInfoControll
     {
-        private List<ExceptionInfo> _exceptionInfoList;
+        private Dictionary<string, List<ExceptionInfo>> _exceptionInfoDic;
 
-        public List<ExceptionInfo> ExceptionInfoList => _exceptionInfoList;
+        public Dictionary<string, List<ExceptionInfo>> ExceptionInfoDic => _exceptionInfoDic;
+
+        public ExceptionInfoControll()
+        {
+            _exceptionInfoDic = new Dictionary<string, List<ExceptionInfo>>();
+        }
+
+        #region пока не нужный конструктор
 
         /// <summary>
-        /// TODO переделать конструктор
+        ///
         /// </summary>
         /// <param name=""></param>
-        public ExceptionInfoControll(Dictionary<string, List<ExceptionInfo>>)
+        public ExceptionInfoControll(Dictionary<string, List<ExceptionInfo>> exceptionInfoDic)
         {
-            if (exceptionInfoList == null)
-                throw new ArgumentNullException(nameof(exceptionInfoList));
+            if (exceptionInfoDic == null)
+                throw new ArgumentNullException(nameof(exceptionInfoDic));
 
-            _exceptionInfoList = exceptionInfoList;
-        }
+            _exceptionInfoDic = exceptionInfoDic;
+        } 
+        #endregion
 
         public void AddExceptionInfo(ExceptionInfo exceptionInfo)
         {
             if (exceptionInfo == null)
                 throw new ArgumentNullException(nameof(exceptionInfo));
 
-            _exceptionInfoList.Add(exceptionInfo);
+            string templateName = exceptionInfo.ExcceptionBodyTemplate.TemplateName;
+
+            if (!ExceptionInfoDic.ContainsKey(templateName))
+            {
+                ExceptionInfoDic.Add(templateName, new List<ExceptionInfo>());
+            }
+            ExceptionInfoDic[templateName].Add(exceptionInfo);
         }
 
+
+        ///починить TODO
         #region  не должно быть здесь (наверное) (+ не актуально после добавление шаблонов)
         public void SimplyPrintExceptionInfoList()
         {
@@ -49,6 +65,6 @@ namespace LogParse
                 Console.WriteLine(bodyString);
             }
         } 
-        #endregion
+        #endregion 
     }
 }

@@ -6,11 +6,7 @@ namespace LogParse
 {
     public abstract class TemplatePart: IReadingTemplatePart
     {
-        private string _partName;
-
-        private LinkedList<string> _templateBody;
-
-        public LinkedList<string> TemplateBody => _templateBody;
+        protected string _partName;
 
         protected ReadingTemplateEnum _readingTemplate;
 
@@ -45,11 +41,11 @@ namespace LogParse
         {
             PartName = partName;
             EndOfTemplate += endOfTemplate;
-            _templateBody = new LinkedList<string>();
+          //  _templateBody = new LinkedList<string>();
             _reading = false;
         }
 
-        public virtual void LineProcessing(string fileRow)
+        public virtual void LineProcessing(string fileRow, ref ExceptionInfo templatePartBody) 
         {
             throw new NotImplementedException();
         }

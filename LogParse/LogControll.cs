@@ -57,7 +57,7 @@ namespace LogParse
 
             try
             {
-                _exceptionInfoControll = new ExceptionInfoControll(getExceptionsFromFile());
+                _exceptionInfoControll = new ExceptionInfoControll();
 
                 loadSucess = true;
             }
@@ -191,25 +191,20 @@ namespace LogParse
                     //если шаблон ещё не считывается
                     if (!exceptionBodyTemplateIsReading)
                     {
-                       //для каждой части из списка первых частей шаблонов
+                        exceptionInfo = new ExceptionInfo();
+
+                        //для каждой части из списка первых частей шаблонов
                         foreach (var templatePart in FirstTemplatePartsDic)
                         {
-                            //попытка считать строку частью шаблона
-                            templatePart.Value.LineProcessing(fileString);
-
-                            //если попытка была успешной и считывание началось
-                            if (templatePart.Value.IsReading)
+                            //Проверка на совпадение с улсовием первой Части шаблона
+                            if (templatePart.Value.CheckConditionMatch(fileString))
                             {
                                 exceptionBodyTemplateIsReading = true;
 
                                 //нахождение шаблона, первая часть которого начала считываться
                                 readingExceptionBodyTemplate = _exceptionBodyTemplatesDict[templatePart.Key];
 
-                                #region TODO зафигачить конструктор
-                                exceptionInfo = new ExceptionInfo();
                                 exceptionInfo.ExcceptionBodyTemplate = readingExceptionBodyTemplate;
-                                exceptionInfo.ExceptionParts = new Dictionary<string, IReadingTemplatePart>(); 
-                                #endregion
 
                                 readingTemplatePart = templatePart.Value;
                                 break;
@@ -221,25 +216,27 @@ namespace LogParse
                     #region Чтение шаблона
                     else
                     {
-                        if (readingTemplatePart.IsReading)
-                        {
-                            readingTemplatePart.LineProcessing(fileString);
-                        }
-                        else
-                        {
-                            exceptionInfo.ExceptionParts.Add(readingTemplatePart.PartName, readingTemplatePart);
-
-                            if (readingExceptionBodyTemplate.TemplatePartsLinkedList.GetEnumerator().MoveNext())
-                            {
-
-                            }
-                            else
-                            {
-                                exceptionBodyTemplateIsReading = false;
-                                exceptionInfosDic.ContainsKey(readingExceptionBodyTemplate.TemplateName)? exceptionInfosDic[readingExceptionBodyTemplate.TemplateName].Add(readingExceptionBodyTemplate)
-                            }
-                        }
-
+                        LinkedListNode<IReadingTemplatePart> FirstNode = readingExceptionBodyTemplate.TemplatePartsLinkedList.First;
+                        //while (exceptionBodyTemplateIsReading)
+                        //{
+                        //    if (readingTemplatePart.IsReading)
+                        //    {
+                        //        readingTemplatePart.LineProcessing(fileString, ref exceptionInfo);
+                        //    }
+                        //    else
+                        //    {
+                        //        //конец считывания ЧАСТИ шаблона
+                        //        if (readingExceptionBodyTemplate.TemplatePartsLinkedList.GetEnumerator().MoveNext())
+                        //        {
+                        //        }
+                        //        else
+                        //        {
+                        //            //зафигачить Null-ы или обновить значения во всех необходимых переменных
+                        //            exceptionBodyTemplateIsReading = false;
+                        //            exceptionInfosDic.ContainsKey(readingExceptionBodyTemplate.TemplateName) ? exceptionInfosDic[readingExceptionBodyTemplate.TemplateName].Add(readingExceptionBodyTemplate);
+                        //        }
+                        //    }
+                        //}
 
                     } 
                     #endregion

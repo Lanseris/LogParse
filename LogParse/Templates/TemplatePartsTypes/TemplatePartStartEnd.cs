@@ -23,43 +23,59 @@ namespace LogParse.Templates
             EndString = string.IsNullOrWhiteSpace(endString)?"": endString;
         }
 
-        //кажись верно
-        public override void LineProcessing(string fileRow)
+        //Метод определения начала и конца Части шаблона
+        public override void LineProcessing(string fileRow, ref ExceptionInfo exceptionInfo)
         {
+            if (CheckConditionMatch(fileRow))
+            {
+                _reading = !_reading;
+                if (!string.IsNullOrWhiteSpace(fileRow))
+                {
+                    exceptionInfo.AddRowToTemplatePartBody(_partName,fileRow);
+                }
+            }
+            else
+            {
+                if (_reading)
+                {
+                    exceptionInfo.AddRowToTemplatePartBody(_partName, fileRow);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Проверка совпадения читаемой строки, параметра _reading и значений из Части шаблона (start,end)
+        /// </summary>
+        /// <param name="stringForCheck">строка в которой ищется совпадение</param>
+        /// <returns></returns>
+        public bool CheckConditionMatch(string stringForCheck)
+        {
+            //TODO Варианты с началом на "" не допустимы, подумать над этим ещё
             if (_reading)
             {
                 if (!string.IsNullOrWhiteSpace(EndString))
                 {
-                    TemplateBody.AddLast(fileRow);
-
-                    if (fileRow.Contains(EndString))
+                    if (stringForCheck.Contains(EndString))
                     {
-                        InvokeEndOfTemplate();
-                        _reading = false;
+                        return true;
                     }
                 }
                 else
                 {
-                    if (!string.IsNullOrWhiteSpace(fileRow))
+                    if (string.IsNullOrWhiteSpace(stringForCheck))
                     {
-                        TemplateBody.AddLast(fileRow);
-                    }
-                    else
-                    {
-                        InvokeEndOfTemplate();
-                        _reading = false;
+                        return true;
                     }
                 }
             }
             else
             {
-                if (fileRow.Contains(StartString))
+                if (stringForCheck.Contains(StartString))
                 {
-                    TemplateBody.AddLast(fileRow);
-                    _reading = true;
+                    return true;
                 }
             }
-            
+            return false;
         }
     }
 }
